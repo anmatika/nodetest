@@ -1,16 +1,13 @@
-#!/usr/bin/env node
-
 const crypto = require('crypto');
 const q = require('q');
 
 const encrypt = (secret, message) => {
     const cipher = crypto.createCipher('aes192', secret);
 
-
     let hash = cipher.update(message, 'utf8', 'hex');
     hash += cipher.final('hex');
     console.log(`crypted message: ${message}`);
-  console.log(`hash: ${hash}`);
+    console.log(`hash: ${hash}`);
     return hash;
 };
 
@@ -26,13 +23,13 @@ const decrypt = (hash, secret) => {
         }
     });
     decipher.on('end', () => {
-      deferred.resolve(decrypted);
+        deferred.resolve(decrypted);
         // Prints: some clear text data
     });
 
     decipher.write(hash, 'hex');
     decipher.end();
-  return deferred.promise;
+    return deferred.promise;
 
 };
 
@@ -44,8 +41,8 @@ if (message === undefined) {
 const secret = 'abcdefg';
 
 const hash = encrypt(secret, message);
-decrypt(hash, secret).then(res => console.log(`decrypted: ${res}`));
-
+decrypt(hash, secret)
+    .then(res => console.log(`decrypted: ${res}`));
 
 exports.encrypt = encrypt;
 exports.decrypt = decrypt;
