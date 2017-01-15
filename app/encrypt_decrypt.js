@@ -7,7 +7,7 @@ const encrypt = (secret, message) => {
     const cipher = crypto.createCipher('aes192', secret);
 
 
-    let encrypted = cipher.update(message, 'utf8', 'hex');
+    let hash = cipher.update(message, 'utf8', 'hex');
     hash += cipher.final('hex');
     console.log(`crypted message: ${message}`);
   console.log(`hash: ${hash}`);

@@ -1,25 +1,13 @@
-// import mocha from 'mocha';
-// import assert from 'assert';
-// const assert = require('assert');
-// const enc = require('../app/encrypt_decrypt');
-
-import assert from 'assert';
-import enc from '../app/encrypt_decrypt';
-
-describe('Array', function() {
-  describe('#indexOf()', function() {
-    it('should return -1 when the value is not present', function() {
-      assert.equal(-2, [1,2,3].indexOf(4));
-    });
-  });
-});
+const assert = require('assert');
+const enc = require('../app/encrypt_decrypt');
 
 describe('enc', function() {
   it('should decrypt', function() {
-   const hash = enc.encrypt('foo', 'bar');
+        const secret = 'foo';
+        const message = 'bar';
+        const hash = enc.encrypt(secret, message);
 
-    console.log(hash);
-    assert(hash == 'db4342');
-
-  });
+        // console.log(`hash: ${hash}`);
+        assert(hash === '2f54c0e3b8016d34537e3237ad7536a8');
+    });
 });
