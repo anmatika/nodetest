@@ -5,7 +5,6 @@ const expect = chai.expect;
 const chaiAsPromised = require('chai-as-promised');
 
 chai.use(chaiAsPromised);
-chai.use(require('chai-string'));
 chai.should();
 
 describe('encrypt', () => {

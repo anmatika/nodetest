@@ -2,7 +2,6 @@ const dns = require('../app/dns');
 const chai = require('chai');
 const chaiAsPromised = require('chai-as-promised');
 chai.use(chaiAsPromised);
-chai.use(require('chai-string'));
 const expect = chai.expect;
 chai.should();
 
