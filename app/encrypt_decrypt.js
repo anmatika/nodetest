@@ -30,7 +30,6 @@ const decrypt = (hash, secret) => {
     decipher.write(hash, 'hex');
     decipher.end();
     return deferred.promise;
-
 };
 
 let message = process.argv[2];
