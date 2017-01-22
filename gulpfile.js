@@ -25,38 +25,21 @@ gulp.task('mocha', function() {
         .on('error', gutil.log);
 });
 
-function condition(file) {
-    const scriptFiles = [
-        'package.json',
-        'arrays.js',
-    ];
-    // console.log('file : %j', file);
-    // console.log(`file.path: ${file.path}`);
-    if (file === scriptFiles.some(s => {
-            console.log(`s: ${s}`);
-            console.log(`file: ${file.path}`);
-            console.log(`endsWith: ${file.path.endsWith(s)}`);
-            return file.path.endsWith(s);
-        })) {
-        return true;
-    }
-    return false;
-
-}
 gulp.task('rename', () => {
     const scriptFiles = [
         'dns.js',
-        'foo.js',
+        'encrypt_decrypt.js',
     ];
     return gulp.src('./app/*.js')
         .pipe(ignore.include(file =>
             scriptFiles.some(scriptFile =>
-                file.path.endsWith('/' + scriptFile))))
+                             file.path.split('/').pop() === scriptFile)))
         .pipe(clean())
         .pipe(rename({
             suffix: "-someSuffix",
         }))
         .pipe(gulp.dest(file => file.base)); /* leave it in the same location */
 });
+
 
 gulp.task('default', ['watch-mocha']);
