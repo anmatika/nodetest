@@ -4,8 +4,9 @@ const gutil = require('gulp-util');
 const rename = require("gulp-rename");
 const gulpif = require('gulp-if');
 const tap = require('gulp-tap');
-const gulpIgnore = require('gulp-ignore')
+const ignore = require('gulp-ignore')
 const util = require('util');
+const clean = require('gulp-clean');
 
 gulp.task('watch-mocha', function() {
     // run in oneshot
@@ -42,15 +43,20 @@ function condition(file) {
     return false;
 
 }
-gulp.task('rename', function() {
-    const suffix = '-someSuffix';
-
-    return gulp.src('*.js')
-        // .pipe(/* if the current file is in `scriptFiles`, then add `suffix` to it */)
-        .pipe(gulpIgnore.exclude(condition))
+gulp.task('rename', () => {
+    const scriptFiles = [
+        'dns.js',
+        'foo.js',
+    ];
+    return gulp.src('./app/*.js')
+        .pipe(ignore.include(file =>
+            scriptFiles.some(scriptFile =>
+                file.path.endsWith('/' + scriptFile))))
+        .pipe(clean())
         .pipe(rename({
             suffix: "-someSuffix",
         }))
-        .pipe(gulp.dest('./') /* leave it in the same location */ )
+        .pipe(gulp.dest(file => file.base)); /* leave it in the same location */
 });
+
 gulp.task('default', ['watch-mocha']);
