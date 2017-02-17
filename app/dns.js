@@ -1,15 +1,23 @@
 const dns = require('dns');
-const q = require('q');
+const co = require('co');
 
 const lookup = exports.lookup = (dnsName) => {
-    const deferred = q.defer();
-    dns.lookup(dnsName, (err, addresses, family) => {
-        console.log('addresses:', addresses);
-        deferred.resolve(addresses);
+    return new Promise((resolve, reject) => {
+        dns.lookup(dnsName, (err, addresses, family) => {
+            // reject('foo')
+            resolve(addresses);
+        });
     });
-
-    return deferred.promise;
 };
 
+function run() {
+    co(function* coimpl() {
+        // lookup('nodejs.org').then((res)=> console.log('ready: ' + res));
+        const value = yield lookup('nodejs.org');
+        console.log(value);
+    }).catch((err) => { console.log(err)})
+}
 
-// lookup('nodejs.org').then((res)=> console.log('ready: ' + res));
+if (process.argv[2] === 'run') {
+    run();
+}

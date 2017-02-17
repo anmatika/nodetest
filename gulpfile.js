@@ -17,7 +17,8 @@ gulp.task('mocha', () => {
         read: false
         })
         .pipe(mocha({
-            reporter: 'list'
+            reporter: 'list',
+            require: 'co-mocha'
         }))
         .on('error', gutil.log);
 });

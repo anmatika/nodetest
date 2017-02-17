@@ -13,6 +13,7 @@
     "babel-preset-latest": "^6.16.0",
     "chai": "^2.3.0",
     "chai-as-promised": "^6.0.0",
+    "co-mocha": "^1.2.0",
     "colors": "^1.1.2",
     "eslint": "^3.12.2",
     "eslint-config-airbnb": "^13.0.0",
@@ -34,8 +35,10 @@
     "nyc": "^10.0.0"
   },
   "dependencies": {
+    "co": "^4.6.0",
     "immutable": "^3.8.1",
-    "q": "^1.4.1"
+    "q": "^1.4.1",
+    "redis": "^2.6.5"
   },
   "babel": {
     "presets": [
