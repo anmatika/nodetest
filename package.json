@@ -21,6 +21,7 @@
     "eslint-plugin-jsx-a11y": "^2.2.3",
     "eslint-plugin-react": "^6.8.0",
     "flow-bin": "^0.38.0",
+    "graphical": "^1.0.3",
     "gulp": "^3.9.1",
     "gulp-clean": "^0.3.2",
     "gulp-if": "^2.0.2",
@@ -37,6 +38,7 @@
   "dependencies": {
     "co": "^4.6.0",
     "immutable": "^3.8.1",
+    "node-fetch": "^1.6.3",
     "q": "^1.4.1",
     "redis": "^2.6.5"
   },
