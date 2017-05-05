@@ -37,6 +37,7 @@
     "sinon": "^2.1.0"
   },
   "dependencies": {
+    "autobahn": "^0.12.0",
     "co": "^4.6.0",
     "immutable": "^3.8.1",
     "node-fetch": "^1.6.3",
