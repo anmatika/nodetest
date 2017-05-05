@@ -9,11 +9,11 @@ gulp.task('watch-mocha', () => {
     // run in oneshot
     gulp.start('mocha');
     // start watching
-    gulp.watch(['app/**', 'spec/**'], ['mocha']);
+    gulp.watch(['app/**', '**/spec/**'], ['mocha']);
 });
 
 gulp.task('mocha', () => {
-    return gulp.src(['spec/*.js'], {
+    return gulp.src(['**/spec/*.js'], {
         read: false
         })
         .pipe(mocha({
