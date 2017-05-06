@@ -1,29 +1,27 @@
-const chalk = require('chalk');
 const tradingApi = require('./tradingApi')
 const objectHelper = require('./objectHelper');
+const commandLineOptions = require('./commandLineOptions');
+const consoleLogger = require('./consoleLogger');
 
-function consoleLogMsg(msg, regName) {
-  console.log(chalk.green(regName));
-  console.log(chalk.green('message'));
-  console.log(msg.body);
+const opts = commandLineOptions.get();
+const currencyPair = opts.currencyPair || 'all';
+
+if (opts.all || opts.returnBalances) {
+  tradingApi.returnBalances()
+    .then((msg) => {
+      const objArray = objectHelper.getGreaterThanZeroValuesFromObject(JSON.parse(msg.body));
+      consoleLogger.printArrayLineByLine(objArray);
+    })
+    .catch(err => consoleLogger.printError(err));
 }
 
-function consoleLogError(err) {
-  console.log(chalk.red(`error occured ${err}`));
+if (opts.all || opts.returnTradeHistory) {
+  tradingApi.returnTradeHistory({
+    currencyPair,
+    // currencyPair: BTC_LTC
+    start: new Date('1970-01-01 00:00:00').getTime() / 1000
+    // start: 1410158341,
+    // end: new Date('2017-05-05 05:43:30').getTime() / 1000
+  }).then(msg => consoleLogger.printArrayLineByLine(msg.body))
+    .catch(err => consoleLogger.printError(err))
 }
-
-
-tradingApi.returnBalances()
-  .then((msg) => {
-    const objArray = objectHelper.getGreaterThanZeroValuesFromObject(JSON.parse(msg.body));
-    objArray.forEach((balance) => {
-      console.log(balance);
-    });
-  })
-  .catch(err => consoleLogError(err));
-
-tradingApi.returnTradeHistory({
-  currencyPair: 'all',
-  // start: new Date('April 26, 2017, 2:00').getTime()
-}).then(msg => consoleLogMsg(msg, 'returnTradeHistory'))
-  .catch(err => consoleLogError(err))

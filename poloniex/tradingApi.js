@@ -52,7 +52,7 @@ const createOptions = ({ url, queryString, apiKey, secret }) => {
     body: queryString
   }
 
-  // console.log('requesting with options: ', options)
+  console.log('requesting with options: ', options)
   return options;
 };
 
