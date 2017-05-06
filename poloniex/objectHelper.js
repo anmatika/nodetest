@@ -9,5 +9,11 @@ function getGreaterThanZeroValuesFromObject(obj) {
     .filter(object => parseFloat(object.value) > 0);
 }
 
+function getNonEmptyArrayValuesFromObject(obj) {
+  const objArray = objectToArray(obj);
+  return objArray
+    .filter(object => object.value.length > 0);
+}
 module.exports.objectToArray = objectToArray;
 module.exports.getGreaterThanZeroValuesFromObject = getGreaterThanZeroValuesFromObject;
+module.exports.getNonEmptyArrayValuesFromObject = getNonEmptyArrayValuesFromObject;

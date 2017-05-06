@@ -10,7 +10,17 @@ const PRIVATE_API_URL = 'https://poloniex.com/tradingApi';
 const APIKEY = apikeys.poloniex_api_key;
 const SECRET = apikeys.poloniex_secret;
 
-const createQuery = (command, { currencyPair, start, end }) => {
+const createQuery = (command, {
+  currencyPair,
+  start,
+  end,
+  buy,
+  rate,
+  amount,
+  sell,
+  cancelOrder,
+  orderNumber
+}) => {
   const query = {};
 
   query.command = command;
@@ -22,6 +32,25 @@ const createQuery = (command, { currencyPair, start, end }) => {
   }
   if (end) {
     query.end = end;
+  }
+  if (buy) {
+    query.buy = buy;
+  }
+  if (sell) {
+    query.sell = sell;
+  }
+  if (rate) {
+    query.rate = rate;
+  }
+  if (amount) {
+    query.amount = amount;
+  }
+  if (cancelOrder) {
+    query.cancelOrder = cancelOrder;
+  }
+  if (orderNumber) {
+
+    query.orderNumber = orderNumber;
   }
   query.nonce = nonce();
 
@@ -63,12 +92,12 @@ function makeRequest(command, opts) {
       queryString: createQueryString(command, opts),
       apiKey: APIKEY,
       secret: SECRET }), (err, res, body) => {
-        if (err) {
-          reject(err);
-          return;
-        }
-        resolve(res);
-      })
+      if (err) {
+        reject(err);
+        return;
+      }
+      resolve(res);
+    })
   });
   return promise;
 }
@@ -76,6 +105,25 @@ function makeRequest(command, opts) {
 module.exports.returnBalances = () => {
   return makeRequest('returnBalances', {});
 }
+
+module.exports.buy = ({ currencyPair, amount, rate }) => {
+  return makeRequest('buy', {
+    currencyPair,
+    amount,
+    rate
+  });
+}
+
+module.exports.sell = ({ currencyPair, amount, rate }) => {
+  return makeRequest('sell', {
+    currencyPair,
+    amount,
+    rate
+  });
+}
+
+module.exports.cancelOrder = ({ orderNumber }) => makeRequest('cancelOrder', { orderNumber });
+module.exports.returnOpenOrders = ({ currencyPair }) => makeRequest('returnOpenOrders', { currencyPair });
 
 module.exports.returnTradeHistory = ({ currencyPair, start, end }) => {
   return makeRequest('returnTradeHistory', {

@@ -4,7 +4,9 @@ const commandLineOptions = require('./commandLineOptions');
 const consoleLogger = require('./consoleLogger');
 
 const opts = commandLineOptions.get();
-const currencyPair = opts.currencyPair || 'all';
+const currencyPair = opts.currencyPair;
+const amount = opts.amount;
+const rate = opts.rate;
 
 if (opts.all || opts.returnBalances) {
   tradingApi.returnBalances()
@@ -24,4 +26,39 @@ if (opts.all || opts.returnTradeHistory) {
     // end: new Date('2017-05-05 05:43:30').getTime() / 1000
   }).then(msg => consoleLogger.printArrayLineByLine(msg.body))
     .catch(err => consoleLogger.printError(err))
+}
+
+if (opts.buy) {
+  tradingApi.buy({
+    currencyPair,
+    amount,
+    rate
+  }).then(msg => consoleLogger.print(msg.body))
+    .catch(err => console.log(err))
+}
+
+if (opts.sell) {
+  tradingApi.sell({
+    currencyPair,
+    amount,
+    rate
+  }).then(msg => consoleLogger.print(msg.body))
+    .catch(err => console.log(err))
+}
+
+if (opts.cancelOrder) {
+  tradingApi.cancelOrder({
+    orderNumber: opts.orderNumber
+  }).then(msg => consoleLogger.print(msg.body))
+    .catch(err => console.log(err))
+}
+
+if (opts.returnOpenOrders) {
+  tradingApi.returnOpenOrders({
+    currencyPair: opts.currencyPair
+  }).then((msg) => {
+    const objArray = objectHelper.getNonEmptyArrayValuesFromObject(JSON.parse(msg.body));
+    consoleLogger.printArrayLineByLine(objArray);
+  })
+    .catch(err => console.log(err))
 }
