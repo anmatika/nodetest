@@ -12,6 +12,7 @@ function get() {
     { name: 'rate', type: 'number' },
     { name: 'currencyPair', type: 'string' },
     { name: 'returnOpenOrders', type: 'bool' },
+    { name: 'returnBoughtSold', type: 'bool' },
     { name: 'orderNumber', type: 'string' }
 
   ];
