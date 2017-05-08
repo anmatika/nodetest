@@ -26,60 +26,14 @@ if (opts.all || opts.returnTradeHistory) {
 
 if (opts.returnBoughtSold) {
   tradeHistory.getBoughtSold(opts.currencyPair)
-    .then((msg) => {
-      consoleLogger.print(`bought ${msg.boughtAmount} pcs by ${msg.boughtValue}, average price: ${msg.averageValueBought}`, `${msg.currency} purchases in BTC`);
-      consoleLogger.print(`sold ${msg.soldAmount} pcs by ${msg.soldValue}, average price ${msg.averageValueSold}`, `${msg.currency} sells in BTC`);
+    .then((currencies) => {
+      currencies.forEach((currency) => {
+        consoleLogger.print(`bought ${currency.boughtAmount} pcs by ${currency.boughtValue}, average price: ${currency.averageValueBought}`, `${currency.name} purchases in BTC`);
+        consoleLogger.print(`sold ${currency.soldAmount} pcs by ${currency.soldValue}, average price ${currency.averageValueSold}`, `${currency.name} sells in BTC`);
+      });
     });
-
-  tradingApi.returnTradeHistory({
-    currencyPair,
-    // currencyPair: BTC_LTC
-    start: new Date('1970-01-01 00:00:00').getTime() / 1000
-    // start: 1410158341,
-    // end: new Date('2017-05-05 05:43:30').getTime() / 1000
-  }).then((msg) => {
-    const parsed = JSON.parse(msg.body);
-    let currencies = {}
-    if (Array.isArray(parsed)) {
-      currencies = {
-        currency: parsed
-      }
-    } else {
-      Object.assign(currencies, parsed);
-    }
-
-    Object.keys(currencies).forEach((currency) => {
-      const currencyArr = currencies[currency];
-
-      const boughtValue = currencyArr
-        .filter(a => a.type === 'buy')
-        .map(a => parseFloat(a.total))
-        .reduce((a, b) => a + b, 0);
-
-      const boughtAmount = currencyArr
-            .filter(a => a.type === 'buy')
-            .map(a => parseFloat(a.amount))
-        .reduce((a, b) => a + b, 0);
-
-      const soldValue = currencyArr
-        .filter(a => a.type === 'sell')
-        .map(a => parseFloat(a.total))
-        .reduce((a, b) => a + b, 0);
-
-      const soldAmount = currencyArr
-            .filter(a => a.type === 'sell')
-            .map(a => parseFloat(a.amount))
-        .reduce((a, b) => a + b, 0);
-
-      const averageValueBought = boughtValue / boughtAmount;
-      const averageValueSold = soldValue / soldAmount;
-
-      consoleLogger.print(`bought ${boughtAmount} pcs by ${boughtValue}, average price: ${averageValueBought}`, `${currency} purchases in BTC`);
-      consoleLogger.print(`sold ${soldAmount} pcs by ${soldValue}, average price ${averageValueSold}`, `${currency} sells in BTC`);
-    })
-  })
-    .catch(err => consoleLogger.printError(err))
 }
+
 if (opts.buy) {
   tradingApi.buy({
     currencyPair,

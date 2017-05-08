@@ -29,6 +29,7 @@ function getBoughtSold(currencyPair = 'all') {
         Object.assign(currencies, parsed);
       }
 
+      const currenciesArr = [];
       Object.keys(currencies).forEach((currency) => {
         const currencyArr = currencies[currency];
 
@@ -55,18 +56,18 @@ function getBoughtSold(currencyPair = 'all') {
         const averageValueBought = boughtValue / boughtAmount;
         const averageValueSold = soldValue / soldAmount;
 
-
-
-        resolve({
-          currency,
+        const currencyObj = {
+          name: currency,
           boughtValue,
           boughtAmount,
           averageValueBought,
           soldValue,
           soldAmount,
           averageValueSold
-        });
+        }
+        currenciesArr.push(currencyObj);
       })
+      resolve(currenciesArr);
     })
     .catch(err => reject(err))
   });
