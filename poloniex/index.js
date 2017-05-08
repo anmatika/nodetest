@@ -20,7 +20,15 @@ if (opts.all || opts.returnBalances) {
 
 if (opts.all || opts.returnTradeHistory) {
   tradeHistory.getAllTradeHistory(opts.currencyPair || 'all')
-    .then(msg => consoleLogger.printArrayLineByLine(msg))
+    .then((msg) => {
+      let arr = [];
+      if(Array.isArray(msg)) {
+        Object.assign(arr, msg);
+      } else {
+        arr = objectHelper.objectToArray(msg);
+      }
+      consoleLogger.printArrayLineByLine(arr)
+    })
     .catch(err => consoleLogger.printError(err))
 }
 
