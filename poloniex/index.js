@@ -2,6 +2,7 @@ const tradingApi = require('./tradingApi')
 const objectHelper = require('./objectHelper');
 const commandLineOptions = require('./commandLineOptions');
 const consoleLogger = require('./consoleLogger');
+const tradeHistory = require('./tradehistory');
 
 const opts = commandLineOptions.get();
 const currencyPair = opts.currencyPair;
@@ -18,17 +19,18 @@ if (opts.all || opts.returnBalances) {
 }
 
 if (opts.all || opts.returnTradeHistory) {
-  tradingApi.returnTradeHistory({
-    currencyPair,
-    // currencyPair: BTC_LTC
-    start: new Date('1970-01-01 00:00:00').getTime() / 1000
-    // start: 1410158341,
-    // end: new Date('2017-05-05 05:43:30').getTime() / 1000
-  }).then(msg => consoleLogger.printArrayLineByLine(msg.body))
+  tradeHistory.getAllTradeHistory(opts.currencyPair || 'all')
+    .then(msg => consoleLogger.printArrayLineByLine(msg))
     .catch(err => consoleLogger.printError(err))
 }
 
 if (opts.returnBoughtSold) {
+  tradeHistory.getBoughtSold(opts.currencyPair)
+    .then((msg) => {
+      consoleLogger.print(`bought ${msg.boughtAmount} pcs by ${msg.boughtValue}, average price: ${msg.averageValueBought}`, `${msg.currency} purchases in BTC`);
+      consoleLogger.print(`sold ${msg.soldAmount} pcs by ${msg.soldValue}, average price ${msg.averageValueSold}`, `${msg.currency} sells in BTC`);
+    });
+
   tradingApi.returnTradeHistory({
     currencyPair,
     // currencyPair: BTC_LTC
@@ -37,31 +39,43 @@ if (opts.returnBoughtSold) {
     // end: new Date('2017-05-05 05:43:30').getTime() / 1000
   }).then((msg) => {
     const parsed = JSON.parse(msg.body);
-    let final = {}
+    let currencies = {}
     if (Array.isArray(parsed)) {
-      final = {
+      currencies = {
         currency: parsed
       }
     } else {
-      final = parsed;
+      Object.assign(currencies, parsed);
     }
 
-    Object.keys(final).forEach((currency) => {
-      const currencyArr = final[currency];
-      const bought = currencyArr
+    Object.keys(currencies).forEach((currency) => {
+      const currencyArr = currencies[currency];
+
+      const boughtValue = currencyArr
         .filter(a => a.type === 'buy')
         .map(a => parseFloat(a.total))
-        .reduce((a, b) => {
-          return a + b;
-        }, 0);
-      const sold = currencyArr
+        .reduce((a, b) => a + b, 0);
+
+      const boughtAmount = currencyArr
+            .filter(a => a.type === 'buy')
+            .map(a => parseFloat(a.amount))
+        .reduce((a, b) => a + b, 0);
+
+      const soldValue = currencyArr
         .filter(a => a.type === 'sell')
         .map(a => parseFloat(a.total))
-        .reduce((a, b )=> {
-          return a + b;
-        }, 0);
-      consoleLogger.print(bought,`${currency} purchase value in BTC`);
-      consoleLogger.print(sold, `${currency} sold value in BTC`);
+        .reduce((a, b) => a + b, 0);
+
+      const soldAmount = currencyArr
+            .filter(a => a.type === 'sell')
+            .map(a => parseFloat(a.amount))
+        .reduce((a, b) => a + b, 0);
+
+      const averageValueBought = boughtValue / boughtAmount;
+      const averageValueSold = soldValue / soldAmount;
+
+      consoleLogger.print(`bought ${boughtAmount} pcs by ${boughtValue}, average price: ${averageValueBought}`, `${currency} purchases in BTC`);
+      consoleLogger.print(`sold ${soldAmount} pcs by ${soldValue}, average price ${averageValueSold}`, `${currency} sells in BTC`);
     })
   })
     .catch(err => consoleLogger.printError(err))

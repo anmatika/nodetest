@@ -4,6 +4,7 @@ const nonce   = require('nonce')();
 const apikeys = require('../../keys/apikeys.js')
 const urlLib = require('url');
 
+
 const PUBLIC_API_URL  = 'https://poloniex.com/public';
 const PRIVATE_API_URL = 'https://poloniex.com/tradingApi';
 
