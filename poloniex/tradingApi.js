@@ -50,7 +50,6 @@ const createQuery = (command, {
     query.cancelOrder = cancelOrder;
   }
   if (orderNumber) {
-
     query.orderNumber = orderNumber;
   }
   query.nonce = nonce();
@@ -62,6 +61,7 @@ const createQueryString = (command, opts) => {
   const query = createQuery(command, opts);
 
   const queryString = urlLib.format({ query }).substring(1);
+  console.log('querystring', queryString);
   return queryString;
 }
 
@@ -74,12 +74,14 @@ const createHeader = (apiKey, secret, queryString) => (
   }
 )
 
-const createOptions = ({ url, queryString, apiKey, secret }) => {
+const createOptions = ({ url, queryString, apiKey, secret, method = 'post' }) => {
   const options = {
     url,
-    headers: createHeader(apiKey, secret, queryString),
-    method: 'post',
+    method,
     body: queryString
+  }
+  if (method === 'post') {
+    options.headers = createHeader(apiKey, secret, queryString);
   }
 
   console.log('requesting with options: ', options)
@@ -92,6 +94,7 @@ function makeRequest(command, opts) {
       url: PRIVATE_API_URL,
       queryString: createQueryString(command, opts),
       apiKey: APIKEY,
+      method: opts.method || 'post',
       secret: SECRET }), (err, res, body) => {
       if (err) {
         reject(err);
@@ -103,33 +106,22 @@ function makeRequest(command, opts) {
   return promise;
 }
 
-module.exports.returnBalances = () => {
-  return makeRequest('returnBalances', {});
+function makeRequestPublic(command) {
+  return new Promise((resolve, reject) => {
+    request(`${PUBLIC_API_URL}?command=${command}`, (err, res, body) => {
+      if (err) {
+        reject(err);
+        return;
+      }
+      resolve(res);
+    })
+  })
 }
 
-module.exports.buy = ({ currencyPair, amount, rate }) => {
-  return makeRequest('buy', {
-    currencyPair,
-    amount,
-    rate
-  });
-}
-
-module.exports.sell = ({ currencyPair, amount, rate }) => {
-  return makeRequest('sell', {
-    currencyPair,
-    amount,
-    rate
-  });
-}
-
+module.exports.returnBalances = () => makeRequest('returnBalances', {});
+module.exports.buy = ({ currencyPair, amount, rate }) => makeRequest('buy', { currencyPair, amount, rate });
+module.exports.sell = ({ currencyPair, amount, rate }) => makeRequest('sell', { currencyPair, amount, rate });
+module.exports.returnTradeHistory = ({ currencyPair, start, end }) => makeRequest('returnTradeHistory', { currencyPair, start, end });
 module.exports.cancelOrder = ({ orderNumber }) => makeRequest('cancelOrder', { orderNumber });
 module.exports.returnOpenOrders = ({ currencyPair }) => makeRequest('returnOpenOrders', { currencyPair });
-
-module.exports.returnTradeHistory = ({ currencyPair, start, end }) => {
-  return makeRequest('returnTradeHistory', {
-    currencyPair,
-    start,
-    end
-  });
-}
+module.exports.returnTicker = () => makeRequestPublic('returnTicker');

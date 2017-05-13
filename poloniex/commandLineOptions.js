@@ -13,7 +13,8 @@ function get() {
     { name: 'currencyPair', type: 'string' },
     { name: 'returnOpenOrders', type: 'bool' },
     { name: 'returnBoughtSold', type: 'bool' },
-    { name: 'orderNumber', type: 'string' }
+    { name: 'orderNumber', type: 'string' },
+    { name: 'returnTicker', type: 'bool' }
 
   ];
   const opts = dashdash.parse({ options });

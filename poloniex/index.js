@@ -2,7 +2,7 @@ const tradingApi = require('./tradingApi')
 const objectHelper = require('./objectHelper');
 const commandLineOptions = require('./commandLineOptions');
 const consoleLogger = require('./consoleLogger');
-const tradeHistory = require('./tradehistory');
+const tradeHistory = require('./tradeHistory');
 
 const opts = commandLineOptions.get();
 const currencyPair = opts.currencyPair;
@@ -22,7 +22,7 @@ if (opts.all || opts.returnTradeHistory) {
   tradeHistory.getAllTradeHistory(opts.currencyPair || 'all')
     .then((msg) => {
       let arr = [];
-      if(Array.isArray(msg)) {
+      if (Array.isArray(msg)) {
         Object.assign(arr, msg);
       } else {
         arr = objectHelper.objectToArray(msg);
@@ -72,6 +72,19 @@ if (opts.returnOpenOrders) {
     currencyPair: opts.currencyPair
   }).then((msg) => {
     const objArray = objectHelper.getNonEmptyArrayValuesFromObject(JSON.parse(msg.body));
+    consoleLogger.printArrayLineByLine(objArray);
+  })
+    .catch(err => console.log(err))
+}
+
+if (opts.returnTicker) {
+  tradingApi.returnTicker({
+  }).then((msg) => {
+    const objArray = objectHelper.objectToArray(JSON.parse(msg.body))
+    .filter(x =>
+      !opts.currencyPair
+      || opts.currencyPair === 'all'
+      || x.key === opts.currencyPair);
     consoleLogger.printArrayLineByLine(objArray);
   })
     .catch(err => console.log(err))
