@@ -14,7 +14,9 @@ function get() {
     { name: 'returnOpenOrders', type: 'bool' },
     { name: 'returnBoughtSold', type: 'bool' },
     { name: 'orderNumber', type: 'string' },
-    { name: 'returnTicker', type: 'bool' }
+    { name: 'returnTicker', type: 'bool' },
+    { name: 'chat', type: 'bool' },
+    { name: 'market', type: 'bool' }
 
   ];
   const opts = dashdash.parse({ options });

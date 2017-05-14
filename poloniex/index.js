@@ -1,8 +1,10 @@
+const chalk = require('chalk');
 const tradingApi = require('./tradingApi')
 const objectHelper = require('./objectHelper');
 const commandLineOptions = require('./commandLineOptions');
 const consoleLogger = require('./consoleLogger');
-const tradeHistory = require('./tradeHistory');
+const tradeHistory = require('./apiCall/tradeHistory');
+const streamApi = require('./stream_api')
 
 const opts = commandLineOptions.get();
 const currencyPair = opts.currencyPair;
@@ -88,4 +90,27 @@ if (opts.returnTicker) {
     consoleLogger.printArrayLineByLine(objArray);
   })
     .catch(err => console.log(err))
+}
+if (opts.chat) {
+  const api = streamApi([], (obj) => {
+    if (obj.type === 'trollbox') {
+      if (obj.message[3].toLowerCase().includes('polo')) {
+        console.log(chalk.green(obj.message[2] + ' : ' + obj.message[3]));
+      } else {
+        console.log(`${obj.message[2]}: ${obj.message[3]}`);
+      }
+    }
+  });
+  api.debuglog = console.log;
+}
+
+if (opts.market) {
+  const stream = streamApi(['BTC_ETH'], (obj) => {
+    if (obj.type === 'ticker' && obj.pair === 'BTC_ETH') {
+      obj.message.forEach((w) => {
+        console.log('data', w.data)
+      })
+      console.log(obj)
+    }
+  });
 }

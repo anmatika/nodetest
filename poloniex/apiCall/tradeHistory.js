@@ -1,4 +1,4 @@
-const tradingApi = require('./tradingApi')
+const tradingApi = require('../tradingApi')
 
 function getAllTradeHistory(currencyPair = 'all') {
   return new Promise((resolve, reject) => {
